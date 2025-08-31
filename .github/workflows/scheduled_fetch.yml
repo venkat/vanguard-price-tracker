@@ -24,7 +24,7 @@ jobs:
         run: pip install requests
 
       - name: Run Python script
-        run: python fetch_price.py
+        run: python fetch_2070_trust.py
 
       - name: Commit and push changes
         run: |
