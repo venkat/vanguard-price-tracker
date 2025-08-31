@@ -50,9 +50,9 @@ try:
             historical_data.append(new_entry)
             print(f"Added new data for {formatted_date}")
 
-    # 6. Filter data to keep only the last 30 days
+    # 6. Filter data to keep only the last 90 days
     today = datetime.now()
-    thirty_days_ago = today - timedelta(days=30)
+    thirty_days_ago = today - timedelta(days=90)
     
     filtered_data = [
         item for item in historical_data
