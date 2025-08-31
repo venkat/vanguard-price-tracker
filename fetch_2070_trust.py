@@ -1,4 +1,5 @@
 import requests
+import urllib3
 import json
 import re
 from datetime import datetime, timedelta
