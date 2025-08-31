@@ -5,16 +5,16 @@ from datetime import datetime, timedelta
 def get_historical_data():
     """Reads the existing JSON file or returns an empty list."""
     try:
-        with open("vanguard_price.json", "r") as json_file:
+        with open("vanguard_2070_trust_prices.json", "r") as json_file:
             return json.load(json_file)
     except (FileNotFoundError, json.JSONDecodeError):
         return []
 
 def save_data(data_list):
     """Saves the updated data list to the JSON file."""
-    with open("vanguard_price.json", "w") as json_file:
+    with open("vanguard_target_2070_trust_prices.json", "w") as json_file:
         json.dump(data_list, json_file, indent=4)
-    print("Successfully saved data to vanguard_price.json")
+    print("Successfully saved data to vanguard_target_2070_trust_prices.json")
 
 try:
     # 1. Read the raw data fetched by wget
