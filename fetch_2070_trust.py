@@ -3,6 +3,9 @@ import json
 import re
 from datetime import datetime, timedelta
 
+# Suppress the InsecureRequestWarning
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
 # The API endpoint and headers
 api_url = "https://api.vanguard.com/rs/ire/01/pe/fund/M013/price/.jsonp?callback=angular.callbacks._2&planId=093926&portId=M013"
 headers = {
@@ -29,7 +32,8 @@ try:
     historical_data = get_historical_data()
     
     # 2. Fetch the latest daily price
-    response = requests.get(api_url, headers=headers)
+    # Add verify=False to ignore SSL certificate validation
+    response = requests.get(api_url, headers=headers, verify=False)
     response.raise_for_status()
     
     jsonp_data = response.text
