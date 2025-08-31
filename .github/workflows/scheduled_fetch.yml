@@ -20,15 +20,20 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Install dependencies
-        run: pip install requests # requests is not used in the script, but good practice to have it
-
       - name: Fetch data using wget
         run: |
           wget --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36" \
                --referer="https://investor.vanguard.com/" \
                -O vanguard_raw.jsonp \
                "https://api.vanguard.com/rs/ire/01/pe/fund/M013/price/.jsonp?callback=angular.callbacks._2&planId=093926&portId=M013"
+
+      - name: Commit raw API output for debugging
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add vanguard_raw.jsonp
+          git commit -m "Debugging: Saved raw JSONP output" || echo "No changes to commit"
+          git push
 
       - name: Run Python script to process data
         run: python fetch_2070_trust.py

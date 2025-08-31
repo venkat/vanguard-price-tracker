@@ -25,10 +25,16 @@ try:
     json_str = re.search(r'\((\{.*\})\)', jsonp_data).group(1)
     new_price_data = json.loads(json_str)
 
-    # 3. Read existing historical data
+    # 3. Check for the required key and process the data
+    if 'asOfDate' not in new_price_data:
+        print(f"Error: 'asOfDate' key not found in the fetched data.")
+        print("Raw data received:", json.dumps(new_price_data, indent=2))
+        exit(1) # Exit with an error code
+
+    # 4. Read existing historical data
     historical_data = get_historical_data()
     
-    # 4. Check if this date already exists to avoid duplicates
+    # 5. Check if this date already exists to avoid duplicates
     new_date = new_price_data['asOfDate']
     if any(item['asOfDate'] == new_date for item in historical_data):
         print(f"Data for {new_date} already exists. No update needed.")
@@ -36,7 +42,7 @@ try:
         historical_data.append(new_price_data)
         print(f"Added new data for {new_date}")
 
-    # 5. Filter data to keep only the last 30 days
+    # 6. Filter data to keep only the last 30 days
     today = datetime.now()
     thirty_days_ago = today - timedelta(days=30)
     
@@ -45,8 +51,9 @@ try:
         if datetime.strptime(item['asOfDate'], '%m/%d/%Y') > thirty_days_ago
     ]
     
-    # 6. Save the updated list
+    # 7. Save the updated list
     save_data(historical_data)
     
 except (IOError, json.JSONDecodeError, AttributeError, ValueError) as e:
     print(f"Error processing data: {e}")
+    exit(1)
