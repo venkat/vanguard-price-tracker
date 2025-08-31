@@ -23,37 +23,45 @@ try:
 
     # 2. Extract the JSON from the JSONP response
     json_str = re.search(r'\((\{.*\})\)', jsonp_data).group(1)
-    new_price_data = json.loads(json_str)
+    new_data = json.loads(json_str)
 
-    # 3. Check for the required key and process the data
-    if 'asOfDate' not in new_price_data:
-        print(f"Error: 'asOfDate' key not found in the fetched data.")
-        print("Raw data received:", json.dumps(new_price_data, indent=2))
-        exit(1) # Exit with an error code
-
-    # 4. Read existing historical data
+    # 3. Read existing historical data
     historical_data = get_historical_data()
     
-    # 5. Check if this date already exists to avoid duplicates
-    new_date = new_price_data['asOfDate']
-    if any(item['asOfDate'] == new_date for item in historical_data):
-        print(f"Data for {new_date} already exists. No update needed.")
-    else:
-        historical_data.append(new_price_data)
-        print(f"Added new data for {new_date}")
+    # 4. Extract new data from the nested structure
+    new_historical_entries = new_data['historicalPrice']['nav'][0]['item']
+    
+    # 5. Process and merge new entries with existing data
+    for entry in new_historical_entries:
+        # Convert the date format to match the previous one
+        as_of_date_obj = datetime.strptime(entry['asOfDate'], '%Y-%m-%dT%H:%M:%S%z')
+        formatted_date = as_of_date_obj.strftime('%m/%d/%Y')
+        
+        # Prepare the new entry in the desired format
+        new_entry = {
+            'asOfDate': formatted_date,
+            'netAssetValue': entry['price'],
+            'change': None,  # Data not available in new format
+            'changePercentage': None # Data not available in new format
+        }
+
+        # Check if the date already exists to avoid duplicates
+        if not any(item['asOfDate'] == formatted_date for item in historical_data):
+            historical_data.append(new_entry)
+            print(f"Added new data for {formatted_date}")
 
     # 6. Filter data to keep only the last 30 days
     today = datetime.now()
     thirty_days_ago = today - timedelta(days=30)
     
-    historical_data = [
+    filtered_data = [
         item for item in historical_data
         if datetime.strptime(item['asOfDate'], '%m/%d/%Y') > thirty_days_ago
     ]
     
     # 7. Save the updated list
-    save_data(historical_data)
+    save_data(filtered_data)
     
-except (IOError, json.JSONDecodeError, AttributeError, ValueError) as e:
+except (IOError, json.JSONDecodeError, AttributeError, ValueError, KeyError) as e:
     print(f"Error processing data: {e}")
     exit(1)
