@@ -2,14 +2,14 @@ name: Scheduled Price Fetch
 
 on:
   schedule:
-    - cron: '0 0 * * *' # This runs the workflow every day at 00:00 UTC
-  workflow_dispatch: # Allows you to manually trigger the workflow from the Actions tab
+    - cron: '0 0 * * *'
+  workflow_dispatch:
 
 jobs:
   fetch-and-update:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # This is required to push changes back to the repository
+      contents: write
 
     steps:
       - name: Checkout repository
@@ -21,18 +21,22 @@ jobs:
           python-version: '3.x'
 
       - name: Install dependencies
-        run: pip install requests
+        run: pip install requests # requests is not used in the script, but good practice to have it
 
-      - name: Upgrade dependencies
-        run: pip install --upgrade requests urllib3 pyopenssl
+      - name: Fetch data using wget
+        run: |
+          wget --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36" \
+               --referer="https://investor.vanguard.com/" \
+               -O vanguard_raw.jsonp \
+               "https://api.vanguard.com/rs/ire/01/pe/fund/M013/price/.jsonp?callback=angular.callbacks._2&planId=093926&portId=M013"
 
-      - name: Run Python script
+      - name: Run Python script to process data
         run: python fetch_2070_trust.py
 
       - name: Commit and push changes
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add .
+          git add vanguard_price.json
           git commit -m "Automated price update" || echo "No changes to commit"
           git push
