@@ -1,1 +1,8 @@
 baseurl: /vanguard-price-tracker
+
+# List files and folders to exclude from the Jekyll build
+exclude:
+  - README.md
+  - .gitignore
+  - fetch_2070_trust.py
+  - vanguard_raw.jsonp
