@@ -1,5 +1,11 @@
 [
     {
+        "asOfDate": "11/26/2025",
+        "netAssetValue": "155.84",
+        "change": null,
+        "changePercentage": null
+    },
+    {
         "asOfDate": "11/25/2025",
         "netAssetValue": "154.64",
         "change": null,
@@ -56,12 +62,6 @@
     {
         "asOfDate": "11/12/2025",
         "netAssetValue": "157.05",
-        "change": null,
-        "changePercentage": null
-    },
-    {
-        "asOfDate": "11/11/2025",
-        "netAssetValue": "156.73",
         "change": null,
         "changePercentage": null
     }
