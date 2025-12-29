@@ -5,6 +5,12 @@ on:
     - cron: '0 0 * * *'
   workflow_dispatch:
 
+# Prevent concurrent runs to avoid race conditions when updating the JSON file.
+# If a run is in progress, new runs will wait in queue rather than running in parallel.
+concurrency:
+  group: price-fetch
+  cancel-in-progress: false
+
 jobs:
   fetch-and-update:
     runs-on: ubuntu-latest
@@ -25,15 +31,8 @@ jobs:
           wget --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36" \
                --referer="https://investor.vanguard.com/" \
                -O vanguard_raw.jsonp \
-               "https://api.vanguard.com/rs/ire/01/pe/fund/M013/price/.jsonp?callback=angular.callbacks._2&planId=093926&portId=M013"
-
-      - name: Commit raw API output for debugging
-        run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add vanguard_raw.jsonp
-          git commit -m "Debugging: Saved raw JSONP output" || echo "No changes to commit"
-          git push
+               "https://api.vanguard.com/rs/ire/01/pe/fund/M013/price/.jsonp?callback=angular.callbacks._2&planId=093926&portId=M013" \
+          || { echo "Failed to fetch data from Vanguard API"; exit 1; }
 
       - name: Run Python script to process data
         run: python fetch_2070_trust.py
@@ -42,6 +41,6 @@ jobs:
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add vanguard_target_2070_trust_prices.json
+          git add vanguard_raw.jsonp vanguard_target_2070_trust_prices.json
           git commit -m "Automated price update" || echo "No changes to commit"
           git push
