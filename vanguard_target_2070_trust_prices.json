@@ -190,5 +190,11 @@
         "netAssetValue": "164.15",
         "change": null,
         "changePercentage": null
+    },
+    {
+        "asOfDate": "01/30/2026",
+        "netAssetValue": "162.76",
+        "change": null,
+        "changePercentage": null
     }
 ]
