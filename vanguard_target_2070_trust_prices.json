@@ -1,11 +1,5 @@
 [
     {
-        "asOfDate": "05/22/2026",
-        "netAssetValue": "173.39",
-        "change": null,
-        "changePercentage": null
-    },
-    {
         "asOfDate": "05/26/2026",
         "netAssetValue": "175.20",
         "change": null,
@@ -356,6 +350,12 @@
     {
         "asOfDate": "08/18/2026",
         "netAssetValue": "178.54",
+        "change": null,
+        "changePercentage": null
+    },
+    {
+        "asOfDate": "08/19/2026",
+        "netAssetValue": "179.05",
         "change": null,
         "changePercentage": null
     }
