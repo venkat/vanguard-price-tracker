@@ -1,11 +1,5 @@
 [
     {
-        "asOfDate": "08/10/2026",
-        "netAssetValue": "179.42",
-        "change": null,
-        "changePercentage": null
-    },
-    {
         "asOfDate": "08/11/2026",
         "netAssetValue": "179.19",
         "change": null,
